@@ -1,0 +1,48 @@
+# ===============================
+# ESP-IDF build artifacts
+# ===============================
+build/
+sdkconfig.old
+sdkconfig.bak
+
+# ===============================
+# VS Code
+# ===============================
+.vscode/
+!.vscode/extensions.json
+
+# ===============================
+# ESP-IDF generated files
+# ===============================
+managed_components/
+dependencies.lock
+components/*/build/
+
+# ===============================
+# Python / ESP-IDF tooling
+# ===============================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv
+
+# ===============================
+# OS-specific
+# ===============================
+.DS_Store
+Thumbs.db
+
+# ===============================
+# Logs
+# ===============================
+*.log
+
+# ===============================
+# CMake
+# ===============================
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
