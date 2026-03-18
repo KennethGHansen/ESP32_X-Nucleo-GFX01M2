@@ -1,73 +1,44 @@
-/*
-    Running code, using the TMP37 sensor ADC readings via the custom TMP37 driver.
-    Results are filtered by use of EMA and Kalman technique.
-    The driver was originatly developed for the STM32 microcontroller and then rewritten for ESP32
-
-    ESP-IDF entrypoint is app_main()
-    ESP-IDF projects run on FreeRTOS
-*/
-
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "esp_log.h"
-
-#include "tmp37.h"
-
-static const char *TAG = "APP";
+#include "esp_err.h"
+#include "st7789h2.h"
 
 void app_main(void)
 {
-    /*
-        1) Decide which ADC pin, wired TMP37 Vout, to use
-           Example below uses ADC_CHANNEL_2
-    */
+    st7789h2_config_t cfg = {
+        .host = SPI2_HOST,
 
-    TMP37_Handle htmp = {
-        // ADC config
-        .unit     = ADC_UNIT_1,
-        .channel  = ADC_CHANNEL_2,          // <-- CHANGE THIS to match your wiring
-        .atten    = ADC_ATTEN_DB_12,        // widest range; safe default
-        .bitwidth = ADC_BITWIDTH_DEFAULT,
+        // SPI2 IO_MUX defaults on ESP32-S3: CS0=10 MOSI=11 SCLK=12 MISO=13 [1](https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-reference/peripherals/spi_master.html)
+        .pin_cs   = 10,
+        .pin_mosi = 11,
+        .pin_sclk = 12,
+        .pin_miso = -1,   // LCD is write-only here; set to 13 if you actually wire MISO
 
-        // Averaging
-        .samples  = 16,                     // take 16 readings and average
+        // Use the remaining SPI2 IO_MUX “quad” pins as GPIO for LCD control:
+        .pin_dc   = 9,    // QUADHD pin used as DC
+        .pin_rst  = 14,   // QUADWP pin used as RST
+        .pin_bckl = -1,   // set to a GPIO if you control backlight
 
-        // Fallback vref
-        .vref_mv  = 3300,                   // used if calibration isn't available
+        .spi_clock_hz = 10 * 1000 * 1000, // start at 10MHz, increase later
+        .spi_mode     = 0,
 
-        // Filter setup
-        // Slow / low noise
-        .ema_alpha = 0.01f,
-        .kalman_q  = 0.001f,
-        .kalman_r  = 5.0f,
-        
-        // Fast / higher noise
-        //.ema_alpha = 0.2f,
-        //.kalman_q  = 0.05f,
-        //.kalman_r  = 1.0f,
+        .width    = 240,
+        .height   = 320,
+        .x_offset = 0,
+        .y_offset = 0,
     };
 
-    /*
-        Initialize ADC oneshot + channel config and attempt calibration.
-        If calibration works, raw->mV becomes much more accurate.
-    */
-    TMP37_Init(&htmp);
+    ESP_ERROR_CHECK(st7789h2_init(&cfg));
+
+    st7789h2_fill(0x0000);
+
+    st7789h2_draw_string_scaled(
+        50, 50,
+        "Hello World!\n\nJust a Test\n\nTo see\n\nIf it works",
+        0xFFFF, 0x0000, 2
+    );
 
     while (1) {
-        // Read filtered temperatures
-        float ema_temp = TMP37_ReadFiltered(&htmp);
-        float kal_temp = TMP37_ReadFilteredKalman(&htmp);
-
-        // Print to console (idf.py monitor)
-        ESP_LOGI(TAG, "TMP37: EMA=%.2f C | Kalman=%.2f C", ema_temp, kal_temp);
-
-        /*
-            FreeRTOS delay in milliseconds:
-            vTaskDelay(pdMS_TO_TICKS(ms));
-        */
-        vTaskDelay(pdMS_TO_TICKS(200));
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
-
-    // If you ever break out of loop, you could call:
-    // TMP37_Deinit(&htmp);
 }

@@ -1,6 +1,5 @@
-idf_component_register(SRCS "tmp37.c" "main_app.c"
-                       PRIV_REQUIRES spi_flash
-                       INCLUDE_DIRS ""              
-                       REQUIRES
-                       esp_adc)
-
+idf_component_register(
+    SRCS "main_app.c"
+    INCLUDE_DIRS "."
+    REQUIRES st7789h2
+)       

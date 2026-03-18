@@ -1,48 +1,31 @@
-# ===============================
-# ESP-IDF build artifacts
-# ===============================
+# Build output
 build/
-sdkconfig.old
-sdkconfig.bak
 
-# ===============================
-# VS Code
-# ===============================
-.vscode/
-!.vscode/extensions.json
-
-# ===============================
 # ESP-IDF generated files
-# ===============================
-managed_components/
-dependencies.lock
-components/*/build/
+sdkconfig
+sdkconfig.old
+sdkconfig.defaults.old
 
-# ===============================
-# Python / ESP-IDF tooling
-# ===============================
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.env
-.venv
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
 
-# ===============================
-# OS-specific
-# ===============================
+# Ninja
+.ninja_deps
+.ninja_log
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# OS files
 .DS_Store
 Thumbs.db
 
-# ===============================
-# Logs
-# ===============================
-*.log
+# Python cache
+__pycache__/
+*.pyc
 
-# ===============================
-# CMake
-# ===============================
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
+# ESP-IDF tooling
+*.log
