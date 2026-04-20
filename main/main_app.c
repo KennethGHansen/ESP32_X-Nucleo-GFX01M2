@@ -15,11 +15,12 @@ void app_main(void)
         .pin_miso = -1,   // LCD is write-only here; set to 13 if you actually wire MISO
 
         // Use the remaining SPI2 IO_MUX “quad” pins as GPIO for LCD control:
-        .pin_dc   = 9,    // QUADHD pin used as DC
+        //.pin_dc   = 9,    // QUADHD pin used as DC
+        .pin_dc = 46,     // FOR WEATHER-STATION
         .pin_rst  = 14,   // QUADWP pin used as RST
         .pin_bckl = -1,   // set to a GPIO if you control backlight
 
-        .spi_clock_hz = 10 * 1000 * 1000, // start at 10MHz, increase later
+        .spi_clock_hz = 20 * 1000 * 1000, // start at 10MHz, increase later
         .spi_mode     = 0,
 
         .width    = 240,
@@ -37,6 +38,10 @@ void app_main(void)
         "Hello World!\n\nJust a Test\n\nTo see\n\nIf it works",
         0xFFFF, 0x0000, 2
     );
+    
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    st7789h2_fill(0x0000);
+    st7789h2_draw_string_scaled_fast(50,50,"Hello World!\n\nJust a Test\n\nTo see\n\nIf it works", 0xFFFF, 0x0000, 2);
 
     while (1) {
         vTaskDelay(pdMS_TO_TICKS(1000));
