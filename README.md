@@ -139,6 +139,7 @@ ESP32_X-Nucleo-GFX01M2/
 - Ensure shared ground between boards
 - Backlight handling depends on X‑NUCLEO variant
 - Driver uses polling SPI for reliability
+- UPDATE 2026-04-20: I have added a function that writes faster, called st7789h2_draw_string_scaled_fast
 
 ---
 
